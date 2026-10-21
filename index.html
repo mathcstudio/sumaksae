@@ -351,7 +351,7 @@ td.preview{white-space:normal;max-width:260px;color:var(--muted);font-size:13.5p
    설정: 구글 Apps Script 웹 앱을 배포한 뒤 받은 URL을 아래 따옴표 안에 붙여 넣으세요.
    예) const API_URL = "https://script.google.com/macros/s/AKfy.../exec";
    ===================================================================== */
-const API_URL = "https://script.google.com/macros/s/AKfycbxQv3LLrcyOBQI8gDRWX8WcKaSc1tN4kJ-FKh6Go0pD8Gkw5Jh3TSrIvOkIOxbyBHJtpQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw6YPCpEArztYVmcRQNmyY3DwELVSLMdbFNgMweTh5-3aTBM1pADim3b9Pfm5CLK8-U/exec";
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -960,6 +960,19 @@ $('bExcel').onclick=()=>{
   const d=new Date(),stamp=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
   XLSX.writeFile(wb,`수막새_탐구기록_${stamp}.xlsx`);
 };
+
+/* ---------- Enter로 제출 (한글 입력 중에도) ---------- */
+function enterSubmits(form){
+  let last=0;
+  form.addEventListener('submit',()=>{last=Date.now();},true);
+  form.addEventListener('keyup',e=>{
+    if(e.key!=='Enter'||e.isComposing||e.target.tagName!=='INPUT')return;
+    if(Date.now()-last<400)return;
+    last=Date.now();
+    if(form.requestSubmit)form.requestSubmit();else form.dispatchEvent(new Event('submit',{cancelable:true,bubbles:true}));
+  });
+}
+enterSubmits($('loginForm'));enterSubmits($('tAuth'));
 
 /* ---------- 시작 ---------- */
 setTool('point');showGate();render();renderMission();
